@@ -8,6 +8,9 @@ import type { SuiClientTypes } from "@mysten/sui/client";
  * Collection of utils used by tests
  * @param env configuration from the environment
  * @param signer configuration for signer
+ * @dev DERIVED_STRUCT_KEY_SIGNATURE should NOT include the positional arguments, for example:
+ * correct: DerivedStructKey
+ * invalid: DerivedStructKey(address)
  */
 export class TestUtils {
     env: { PARENT_OBJECT_ID: string, PACKAGE_ID: string, USER_SECRET_KEY: string, DERIVED_STRUCT_KEY_SIGNATURE: string };
@@ -76,14 +79,18 @@ export class TestUtils {
         const objectTypeAsDerived = shortDerivedKeyType.charAt(0).toUpperCase() + shortDerivedKeyType.slice(1); // uppercase object type
         const fullObjectType = `${this.env.PACKAGE_ID}::objects::DerivedObject${objectTypeAsDerived}`; // package::module::StructName
 
-        // find object id by type in ObjectTypes
-        const objectId = Object
-            .values(response!.objectTypes)
-            .find((objType) => objType === fullObjectType);
-        if (!objectId) return undefined;
+        // find the object ID whose type matches
+        const entry = Object
+            .entries(response!.objectTypes)
+            .find(([_, objType]) => objType === fullObjectType);
+        if (!entry) return undefined;
 
-        // ensure object was created and not other operations
-        const createdObject = response!.effects.changedObjects.find((obj) => obj.idOperation === "Created");
+        const [objectId] = entry;
+
+        // ensure that specific object was created
+        const createdObject = response!.effects.changedObjects.find(
+            (obj) => obj.objectId === objectId && obj.idOperation === "Created"
+        );
         if (!createdObject) return undefined;
 
         return createdObject;
