@@ -2,6 +2,7 @@
 /// Collection of different derived objects types and helper functions
 /// dev: `derivation_id`: optional field in every object to improve offchain operations(e.g. indexing) -
 /// and additional security checks in future
+/// dev: We use `key, store` abilities to allow public transfers
 module derived_objects::objects;
 
 use derived_objects::parent::ParentObject;
@@ -11,19 +12,19 @@ use sui::derived_object;
 // ================================ Derived Objects Structs ================================
 
 /// Derived Object Incremental (u64): will be derived from (parent + u64), incremental
-public struct DerivedObjectIncremental has key {
+public struct DerivedObjectIncremental has key, store {
     id: UID,
     derivation_id: ID,
 }
 
 /// Derived Object Address: will be derived from (parent + address), e.g. sender address
-public struct DerivedObjectAddress has key {
+public struct DerivedObjectAddress has key, store {
     id: UID,
     derivation_id: ID,
 }
 
 /// Derived Object String: will be derived from (parent + String)
-public struct DerivedObjectString has key {
+public struct DerivedObjectString has key, store {
     id: UID,
     derivation_id: ID,
 }
@@ -33,7 +34,7 @@ public struct DerivedObjectString has key {
 public struct DerivedObjectStructKey(address) has copy, drop, store;
 
 /// Derived Object Struct: will be derived from (parent + Struct(type))
-public struct DerivedObjectStruct has key {
+public struct DerivedObjectStruct has key, store {
     id: UID,
     derivation_id: ID,
     addr: address, // same address as the key, optional but used for possible future checks

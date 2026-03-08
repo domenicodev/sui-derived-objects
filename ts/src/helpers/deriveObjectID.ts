@@ -8,7 +8,11 @@ import { deriveObjectID } from "@mysten/sui/utils";
  * @param bcsHelper helper for the bcs library (e.g. bcs.Address, bcs.Uint64, ...)
  * @returns derived object ID
  */
-export const deriveObjectIDFromParent = <T extends BcsType<any, any, any>>(keyType: string, key: any, bcsHelper: T): string => {
+export const deriveObjectIDFromParent = <T extends BcsType<any, any, any>>(
+    keyType: string,
+    key: any,
+    bcsHelper: T
+): string => {
     return deriveObjectID(
         process.env.PARENT_OBJECT_ID!, // parent id
         keyType, // typeTag/keyType(full type name)

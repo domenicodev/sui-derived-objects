@@ -8,6 +8,14 @@ public struct ParentObject has key {
     incremental_counter: u64, // incremental counter for incremental derived objects only, lastIndex = counter - 1
 }
 
+/// Initializer: create and share a new ParentObject for simplicity
+fun init(ctx: &mut TxContext) {
+    transfer::share_object(ParentObject {
+        id: object::new(ctx),
+        incremental_counter: 0,
+    });
+}
+
 /// Create a new parent object
 public fun create_parent_object(ctx: &mut TxContext): ParentObject {
     ParentObject {
